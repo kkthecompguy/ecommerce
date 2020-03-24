@@ -40,21 +40,6 @@ class RegisterView(View):
             return redirect('core:register')
 
 
-class LoginView(View):
-    def post(self, *args, **kwargs):
-        username = form.cleaned_data.get('username')
-        password = form.cleaned_data.get('password')
-
-        user = authenticate(
-            self.request,  username=username, password=password)
-
-        if user is not None:
-            login(self.request, user)
-            return redirect('account_login')
-        else:
-            messages.warning(self.request, 'Invalid credentials')
-
-
 def logout_view(request):
     logout(request)
     return redirect('account_login')
@@ -81,7 +66,6 @@ class OrderSummaryView(LoginRequiredMixin, View):
 def product(request, pk):
     item = Item.objects.get(pk=pk)
     extra_items = Item.objects.all()[3:5]
-    print(extra_items)
     context = {
         'item': item,
         'extra_items': extra_items
@@ -140,7 +124,6 @@ class CheckoutView(View):
                 use_default_shipping = form.cleaned_data.get(
                     'use_default_shipping')
                 if use_default_shipping:
-                    print('Using the default shipping address')
                     address_qs = Address.objects.filter(
                         user=self.request.user,
                         address_type='S',
@@ -155,7 +138,6 @@ class CheckoutView(View):
                             self.request, 'No default shipping address available')
                         return redirect('core:checkout')
                 else:
-                    print('User is entering a new shipping address')
                     shipping_address1 = form.cleaned_data.get(
                         'shipping_address')
                     shipping_address2 = form.cleaned_data.get(
